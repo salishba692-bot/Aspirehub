@@ -1,0 +1,8 @@
+{
+  "name": "AspireHub",
+  "description": "An all-in-one educational and career guidance platform helping students, graduates, and aspiring freelancers discover scholarships, master freelancing, and explore AI tools.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- Core Hub Pages -->
+  <url><loc>/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
+  <url><loc>/scholarships</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>/freelancing</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>/ai-tools</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>/ai-tools/compare</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>/resources</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>/blog</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>/about</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+
+  <!-- Scholarships Directory -->
+  <url><loc>/scholarships/chevening-uk-government-scholarships</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>/scholarships/fulbright-graduate-program-pakistan</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>/scholarships/erasmus-mundus-joint-masters</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>/scholarships/hec-pakistan-scholarship-portal</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>/scholarships/daad-development-postgraduate-courses</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>/scholarships/commonwealth-masters-scholarships-uk</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>/scholarships/sample-stem-undergraduate-excellence-award</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>/scholarships/sample-pakistan-need-cum-merit-undergraduate</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>/scholarships/sample-asia-digital-innovation-fellowship-2025-expired</loc><changefreq>yearly</changefreq><priority>0.5</priority></url>
+  <url><loc>/scholarships/sample-nordic-sustainability-tuition-waiver-expired</loc><changefreq>yearly</changefreq><priority>0.5</priority></url>
+
+  <!-- Freelancing Playbooks -->
+  <url><loc>/freelancing/introduction-to-freelancing-for-beginners</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>/freelancing/fiverr-complete-guide-for-beginners</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>/freelancing/upwork-complete-guide-winning-proposals</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>/freelancing/how-to-create-a-portfolio-with-no-clients</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>/freelancing/how-to-find-your-first-client</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>/freelancing/freelancing-skills-to-learn-in-demand</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>/freelancing/client-communication-that-builds-repeat-work</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>/freelancing/pricing-and-payment-methods-for-freelancers</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>/freelancing/common-freelancing-mistakes-beginners-make</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+
+  <!-- AI Tools Directory -->
+  <url><loc>/ai-tools/chatgpt</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>/ai-tools/deepseek</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>/ai-tools/grok</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>/ai-tools/lovable</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>/ai-tools/replit</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>/ai-tools/readdy-ai</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>/ai-tools/bolt-new</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>/ai-tools/read-ai</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>/ai-tools/claude</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>/ai-tools/google-gemini</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>/ai-tools/notebooklm</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>/ai-tools/perplexity-ai</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>/ai-tools/github-copilot</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>/ai-tools/cursor-editor</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>/ai-tools/canva-magic-studio</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>/ai-tools/gamma-app</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>/ai-tools/runway-ml</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>/ai-tools/notion-ai</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+
+  <!-- Free Learning Resources -->
+  <url><loc>/resources/cs50-computer-science-complete-study-guide</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>/resources/full-stack-web-development-curriculum-guide</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>/resources/academic-cv-template-for-scholarships-and-research</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>/resources/one-page-ats-resume-blueprint</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>/resources/bullet-point-resume-writing-guide</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>/resources/scholarship-and-job-cover-letter-guide</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>/resources/interview-preparation-complete-handbook</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>/resources/university-open-courseware-self-study-guide</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>/resources/quantitative-foundations-and-test-prep-guide</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>/resources/developer-and-career-learning-roadmaps</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>/resources/digital-skills-and-career-readiness-guide</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+
+  <!-- Blog Articles -->
+  <url><loc>/blog/how-to-write-a-standout-statement-of-purpose</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>/blog/balancing-university-classes-and-first-freelance-clients</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>/blog/using-ai-tools-to-learn-faster-without-hollowing-out-your-skills</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>/blog/5-portfolio-upgrades-that-make-recruiters-and-clients-stay</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>/blog/12-month-international-scholarship-preparation-calendar</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>/blog/choosing-your-first-high-value-digital-skill</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+</urlset>
