@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --color-navy-950: #0a122a;
   --color-navy-900: #101B3D;
@@ -23,16 +25,89 @@
     scroll-behavior: smooth;
   }
 
+  html.dark {
+    color: #CBD5E1;
+    background-color: #091024;
+    color-scheme: dark;
+  }
+
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-display);
     color: #101B3D;
     text-wrap: balance;
   }
 
+  html.dark h1,
+  html.dark h2,
+  html.dark h3,
+  html.dark h4,
+  html.dark h5,
+  html.dark h6 {
+    color: #F8FAFC;
+  }
+
   *:focus-visible {
     outline: 2px solid #4DA8FF;
     outline-offset: 2px;
   }
+}
+
+/* Harmonized Dark Mode Surface Mapping preserving AspireHub Navy/Violet palette */
+html.dark body {
+  background-color: #091024;
+  color: #CBD5E1;
+}
+
+html.dark .bg-white {
+  background-color: #101B3D;
+}
+
+html.dark .bg-\[\#F7F8FC\] {
+  background-color: #0C1530;
+}
+
+html.dark .bg-slate-50,
+html.dark .bg-slate-100 {
+  background-color: #15234B;
+}
+
+html.dark .text-\[\#101B3D\],
+html.dark .text-\[\#202A44\],
+html.dark .text-\[\#202A44\]\/90,
+html.dark .text-\[\#202A44\]\/85,
+html.dark .text-\[\#202A44\]\/80,
+html.dark .text-\[\#202A44\]\/75 {
+  color: #E2E8F0;
+}
+
+html.dark .text-slate-600,
+html.dark .text-slate-500 {
+  color: #94A3B8;
+}
+
+html.dark .border-slate-200,
+html.dark .border-slate-200\/90,
+html.dark .border-slate-200\/85,
+html.dark .border-slate-200\/80,
+html.dark .border-slate-200\/70,
+html.dark .border-slate-100 {
+  border-color: rgba(148, 163, 184, 0.2);
+}
+
+html.dark .divide-slate-200 > :not(:last-child),
+html.dark .divide-slate-100 > :not(:last-child) {
+  border-color: rgba(148, 163, 184, 0.16);
+}
+
+html.dark input,
+html.dark select,
+html.dark textarea {
+  color: #F8FAFC;
+}
+
+html.dark input::placeholder,
+html.dark textarea::placeholder {
+  color: #64748B;
 }
 
 .tabular-nums {
@@ -54,8 +129,12 @@
   border-radius: 9999px;
 }
 
+html.dark ::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.28);
+}
+
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(105, 86, 216, 0.35);
+  background: rgba(105, 86, 216, 0.45);
 }
 
 @media (prefers-reduced-motion: reduce) {

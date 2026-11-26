@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, CheckCircle2, Compass, Eye, ShieldCheck, Target } from 'lucide-react';
 import { useDocumentTitle } from '../hooks/useDocumentTitle';
+import { useLanguage } from '../context/LanguageContext';
 import { NewsletterSection } from '../components/NewsletterSection';
 import { PageHeader } from '../components/PageHeader';
 import { SafeImage } from '../components/SafeImage';
@@ -30,45 +31,47 @@ const PLATFORM_BENEFITS = [
 ];
 
 export function AboutPage() {
+  const { t } = useLanguage();
+
   useDocumentTitle(
-    'About Us — AspireHub',
-    'Learn about AspireHub’s mission, vision, and commitment to accessible education, digital skills, and transparent guidance.'
+    `${t.pages.aboutTitle} — AspireHub`,
+    t.pages.aboutSubtitle
   );
 
   return (
     <div>
       <PageHeader
-        sectionLabel="About AspireHub"
-        title="Accessible guidance for students, graduates, and beginners"
-        subtitle="Building one dependable place to discover scholarships, learn practical digital skills, and navigate modern AI workflows responsibly."
-        breadcrumbCurrent="About Us"
+        sectionLabel={t.pages.aboutLabel}
+        title={t.pages.aboutTitle}
+        subtitle={t.pages.aboutSubtitle}
+        breadcrumbCurrent={t.nav.about}
       />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16">
         {/* Mission & Visual */}
         <section className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-stretch">
-          <div className="lg:col-span-6 bg-white border border-slate-200/90 rounded-2xl p-7 sm:p-10 flex flex-col justify-center space-y-6">
+          <div className="lg:col-span-6 bg-white dark:bg-[#141E3D] border border-slate-200/90 dark:border-slate-800 rounded-2xl p-7 sm:p-10 flex flex-col justify-center space-y-6">
             <div>
-              <div className="inline-flex items-center gap-2 text-xs font-semibold text-[#6956D8] mb-2">
+              <div className="inline-flex items-center gap-2 text-xs font-semibold text-[#6956D8] dark:text-[#4DA8FF] mb-2">
                 <Target className="w-4 h-4" aria-hidden="true" />
                 Our Mission
               </div>
-              <h2 className="text-2xl sm:text-3xl font-bold text-[#101B3D] leading-snug">
+              <h2 className="text-2xl sm:text-3xl font-bold text-[#101B3D] dark:text-white leading-snug">
                 Removing information barriers between talent and opportunity
               </h2>
-              <p className="mt-4 text-base text-[#202A44]/90 leading-relaxed">
+              <p className="mt-4 text-base text-[#202A44]/90 dark:text-slate-300 leading-relaxed">
                 Our mission is to make educational opportunities, digital skills, and modern
                 technology resources accessible to everyone. We help students and beginners discover
                 opportunities and build a better future.
               </p>
             </div>
 
-            <div className="pt-5 border-t border-slate-100">
-              <div className="inline-flex items-center gap-2 text-xs font-semibold text-[#6956D8] mb-2">
+            <div className="pt-5 border-t border-slate-100 dark:border-slate-800">
+              <div className="inline-flex items-center gap-2 text-xs font-semibold text-[#6956D8] dark:text-[#4DA8FF] mb-2">
                 <Eye className="w-4 h-4" aria-hidden="true" />
                 Our Vision
               </div>
-              <p className="text-sm sm:text-base text-[#202A44]/85 leading-relaxed">
+              <p className="text-sm sm:text-base text-[#202A44]/85 dark:text-slate-300 leading-relaxed">
                 A future where any motivated learner—regardless of background or geography—can find
                 trustworthy scholarship guidance, master an independent digital income skill, and
                 use AI tools thoughtfully to accelerate their growth.
@@ -76,7 +79,7 @@ export function AboutPage() {
             </div>
           </div>
 
-          <div className="lg:col-span-6 rounded-2xl overflow-hidden border border-slate-200/90 bg-white min-h-[280px]">
+          <div className="lg:col-span-6 rounded-2xl overflow-hidden border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-[#141E3D] min-h-[280px]">
             <SafeImage
               src={ABOUT_IMAGE}
               alt="Academic advisor mentoring university students over laptops and study roadmaps"
@@ -89,8 +92,10 @@ export function AboutPage() {
         {/* Platform Benefits */}
         <section>
           <div className="max-w-2xl mb-8">
-            <p className="text-xs font-semibold text-[#6956D8] mb-2">Platform Benefits</p>
-            <h2 className="text-2xl sm:text-3xl font-bold text-[#101B3D]">
+            <p className="text-xs font-semibold text-[#6956D8] dark:text-[#4DA8FF] mb-2">
+              Platform Benefits
+            </p>
+            <h2 className="text-2xl sm:text-3xl font-bold text-[#101B3D] dark:text-white">
               Designed for clarity, accuracy, and real next steps
             </h2>
           </div>
@@ -101,13 +106,15 @@ export function AboutPage() {
               return (
                 <div
                   key={benefit.title}
-                  className="bg-white border border-slate-200/90 rounded-xl p-6"
+                  className="bg-white dark:bg-[#141E3D] border border-slate-200/90 dark:border-slate-800 rounded-xl p-6"
                 >
-                  <div className="w-10 h-10 rounded-lg bg-[#F7F8FC] border border-slate-200 flex items-center justify-center text-[#6956D8] mb-4">
+                  <div className="w-10 h-10 rounded-lg bg-[#F7F8FC] dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-[#6956D8] dark:text-[#4DA8FF] mb-4">
                     <Icon className="w-5 h-5" aria-hidden="true" />
                   </div>
-                  <h3 className="text-lg font-bold text-[#101B3D] mb-2">{benefit.title}</h3>
-                  <p className="text-sm text-[#202A44]/85 leading-relaxed">
+                  <h3 className="text-lg font-bold text-[#101B3D] dark:text-white mb-2">
+                    {benefit.title}
+                  </h3>
+                  <p className="text-sm text-[#202A44]/85 dark:text-slate-300 leading-relaxed">
                     {benefit.description}
                   </p>
                 </div>
@@ -116,33 +123,51 @@ export function AboutPage() {
           </div>
         </section>
 
-        {/* Data Transparency & Architecture */}
-        <section className="bg-white border border-slate-200/90 rounded-2xl p-7 sm:p-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-          <div className="lg:col-span-8 space-y-3">
-            <h2 className="text-xl sm:text-2xl font-bold text-[#101B3D]">
-              Our Commitment to Honest Information
+        {/* Data Transparency & Trust Links */}
+        <section className="bg-white dark:bg-[#141E3D] border border-slate-200/90 dark:border-slate-800 rounded-2xl p-7 sm:p-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          <div className="lg:col-span-8 space-y-4">
+            <h2 className="text-xl sm:text-2xl font-bold text-[#101B3D] dark:text-white">
+              Our Commitment to Honest, Verified Information
             </h2>
-            <p className="text-sm sm:text-base text-[#202A44]/85 leading-relaxed">
+            <p className="text-sm sm:text-base text-[#202A44]/85 dark:text-slate-300 leading-relaxed">
               Too many student portals publish outdated deadlines or fabricated scholarship promises
               for clicks. AspireHub strictly separates verified official portals from clearly labeled
-              sample entries and marks closed cycles as expired. All bookmarks and newsletter
-              previews in this edition operate cleanly in your browser while maintaining a modular
-              data layer ready for PHP and MySQL integration.
+              sample templates, displays last-updated dates across listings, and marks closed
+              cycles as expired. Bookmarks, deadline reminders, interactive toolkit progress, theme,
+              and interface language preferences run privately in your browser without requiring an
+              account.
             </p>
+            <div className="flex flex-wrap items-center gap-5 pt-1 text-xs sm:text-sm font-semibold">
+              <Link to="/contact" className="text-[#6956D8] dark:text-[#4DA8FF] hover:underline">
+                {t.nav.contact}
+              </Link>
+              <Link
+                to="/privacy-policy"
+                className="text-[#6956D8] dark:text-[#4DA8FF] hover:underline"
+              >
+                {t.footer.privacyLink}
+              </Link>
+              <Link to="/disclaimer" className="text-[#6956D8] dark:text-[#4DA8FF] hover:underline">
+                {t.footer.disclaimerLink}
+              </Link>
+              <Link to="/toolkit" className="text-[#6956D8] dark:text-[#4DA8FF] hover:underline">
+                {t.nav.toolkit}
+              </Link>
+            </div>
           </div>
           <div className="lg:col-span-4 flex flex-col sm:flex-row lg:flex-col gap-3">
             <Link
               to="/scholarships"
-              className="inline-flex items-center justify-center gap-2 px-5 py-3 text-sm font-semibold text-white bg-[#101B3D] hover:bg-[#192854] rounded-xl transition-colors"
+              className="inline-flex items-center justify-center gap-2 px-5 py-3 text-sm font-semibold text-white bg-[#101B3D] hover:bg-[#192854] dark:bg-[#6956D8] dark:hover:bg-[#5542C0] rounded-xl transition-colors"
             >
-              Explore Scholarships
+              {t.nav.scholarships}
               <ArrowRight className="w-4 h-4" aria-hidden="true" />
             </Link>
             <Link
               to="/freelancing"
-              className="inline-flex items-center justify-center gap-2 px-5 py-3 text-sm font-semibold text-[#101B3D] bg-[#F7F8FC] hover:bg-slate-200/70 border border-slate-200 rounded-xl transition-colors"
+              className="inline-flex items-center justify-center gap-2 px-5 py-3 text-sm font-semibold text-[#101B3D] dark:text-white bg-[#F7F8FC] dark:bg-slate-800 hover:bg-slate-200/70 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 rounded-xl transition-colors"
             >
-              Start Freelancing Guide
+              {t.nav.freelancing}
             </Link>
           </div>
         </section>

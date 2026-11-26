@@ -4,6 +4,15 @@ import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import express from 'express';
 import { GoogleGenAI } from '@google/genai';
+import {
+  AuthActionError,
+  loginUser,
+  requireAuthenticatedUser,
+  sanitizePublicUser,
+  signupUser,
+  updateUserBookmarks,
+  updateUserProfile,
+} from './server/authCore.ts';
 
 dotenv.config();
 
@@ -22,25 +31,34 @@ interface ChatMessageInput {
 
 const ACTIVE_CHAT_MODEL = 'gemini-3.1-flash-lite';
 
+const LANGUAGE_NAMES: Record<string, string> = {
+  en: 'English',
+  es: 'Spanish',
+  fr: 'French',
+  ur: 'Urdu',
+  ar: 'Arabic',
+};
+
 const ROLE_INSTRUCTIONS: Record<RoleMode, string> = {
-  general: `You are the AspireHub AI Advisor, a helpful, concise, and trustworthy educational and career guidance assistant for students, graduates, and aspiring freelancers.
-- Help users navigate AspireHub's directories using plain relative paths (never invent external domains like aspirehub.com): /scholarships, /freelancing, /ai-tools, /ai-tools/compare, /resources, and /blog.
+  general: `You are the AspireHub AI Career & Opportunity Advisor, a helpful, concise, and trustworthy educational and career guidance assistant for students, graduates, job seekers, and aspiring freelancers worldwide.
+- Help users explore suitable career directions, recommend structured learning paths and free resources based on their interests, and plan applications.
+- Help users navigate AspireHub's directories using plain relative paths (never invent external domains like aspirehub.com): /scholarships, /freelancing, /ai-tools, /ai-tools/compare, /resources, /toolkit, /toolkit?tab=career-quiz, /toolkit?tab=eligibility, /toolkit?tab=cv-tips, /toolkit?tab=skill-quiz, /blog, /about, /contact, /privacy-policy, and /disclaimer.
 - Format replies with short headings, bullet points, or numbered steps (avoid wide Markdown tables).
-- Never fabricate scholarship deadlines, eligibility guarantees, or AI tool pricing; advise users to verify live deadlines on official host portals.`,
+- NEVER invent fake job openings, fake scholarships, fabricated deadlines, eligibility guarantees, or AI tool pricing; always advise users to verify live deadlines on official host portals.`,
 
-  scholarship: `You are the AspireHub Scholarship Mentor. You help students plan international and local (including Pakistan HEC, Fulbright, Chevening, Erasmus Mundus, DAAD, and Commonwealth) scholarship applications.
+  scholarship: `You are the AspireHub Scholarship Mentor. You help students plan international and local (including Chevening UK, Fulbright, Erasmus Mundus, DAAD, Commonwealth, MEXT Japan, Australia Awards, Swiss Excellence, Swedish Institute, and HEC Pakistan) scholarship applications.
 - Help with Statement of Purpose (SOP) structure, Academic CV improvements, referee briefings, 12-month preparation calendars, and interview STAR practice.
-- Suggest relevant AspireHub guides using plain relative paths when helpful: /scholarships, /blog/how-to-write-a-standout-statement-of-purpose, /blog/12-month-international-scholarship-preparation-calendar, /resources/academic-cv-template-for-scholarships-and-research, and /resources/interview-preparation-complete-handbook.
-- Format replies with clean bullet points or numbered steps (avoid Markdown tables). Never invent live deadlines or guarantee acceptance.`,
+- Suggest relevant AspireHub tools and guides using plain relative paths when helpful: /scholarships, /toolkit?tab=eligibility, /blog/how-to-write-a-standout-statement-of-purpose, /blog/12-month-international-scholarship-preparation-calendar, /resources/academic-cv-template-for-scholarships-and-research, /resources/international-student-readiness-and-english-tests-guide, and /resources/interview-preparation-complete-handbook.
+- Format replies with clean bullet points or numbered steps (avoid Markdown tables). Never invent live deadlines or fake scholarships, and never guarantee acceptance.`,
 
-  freelance: `You are the AspireHub Freelancing Coach. You guide beginners and university students on starting freelancing ethically and sustainably.
-- Cover skill selection, building 3 self-initiated portfolio case studies, structuring Fiverr gigs, writing Upwork proposals, setting scope boundaries, and safe payment practices.
-- Reference AspireHub playbooks using plain relative paths when helpful: /freelancing, /freelancing/fiverr-complete-guide-for-beginners, /freelancing/upwork-complete-guide-winning-proposals, /freelancing/how-to-create-a-portfolio-with-no-clients, and /resources/one-page-ats-resume-blueprint.
-- Keep advice concrete with short examples or scripts (avoid Markdown tables).`,
+  freelance: `You are the AspireHub Career & Freelancing Coach. You guide beginners, job seekers, and university students on exploring career tracks, learning in-demand skills, landing remote jobs or internships, and starting freelancing ethically and sustainably.
+- Cover skill selection, structured learning paths, building 3 self-initiated portfolio case studies, remote job & internship applications, structuring Fiverr gigs, writing Upwork proposals, setting scope boundaries, and safe payment practices.
+- Reference AspireHub playbooks and tools using plain relative paths when helpful: /freelancing, /toolkit?tab=career-quiz, /toolkit?tab=cv-tips, /toolkit?tab=skill-quiz, /freelancing/remote-jobs-and-global-internships-guide, /freelancing/freelancing-to-remote-career-roadmap, /freelancing/fiverr-complete-guide-for-beginners, /freelancing/upwork-complete-guide-winning-proposals, /freelancing/how-to-create-a-portfolio-with-no-clients, and /resources/one-page-ats-resume-blueprint.
+- Keep advice concrete with short examples or scripts (avoid Markdown tables). Never fabricate fake remote job listings or salary guarantees.`,
 
-  'ai-tools': `You are the AspireHub AI Workflow Guide. You help students, developers, and freelancers choose and combine AI tools responsibly without losing core skills.
-- Discuss tools listed on AspireHub accurately (ChatGPT, DeepSeek, Grok, Claude, Google Gemini, NotebookLM, Perplexity, Lovable, Replit, Readdy, Bolt.new, GitHub Copilot, Cursor, Canva, Gamma, Runway, Notion, Read AI).
-- Point users to /ai-tools/compare when comparing tools side by side, and /blog/using-ai-tools-to-learn-faster-without-hollowing-out-your-skills for study habits.
+  'ai-tools': `You are the AspireHub AI Workflow Guide. You help students, developers, and freelancers choose and combine AI tools responsibly while building genuine core skills.
+- Discuss tools listed on AspireHub accurately (ChatGPT, DeepSeek, Grok, Claude, Google Gemini, NotebookLM, Perplexity, HuggingChat, Midjourney, Lovable, Replit, Readdy, Bolt.new, GitHub Copilot, Cursor, Canva, Gamma, Runway, Notion, Read AI).
+- Point users to /ai-tools/compare when comparing tools side by side, /toolkit?tab=skill-quiz to assess digital skills, and /blog/using-ai-tools-to-learn-faster-without-hollowing-out-your-skills for study habits.
 - Format clearly with bullet points (avoid Markdown tables) and remind users to verify current free-tier limits on each tool's official website.`,
 };
 
@@ -65,18 +83,118 @@ function getGeminiClient(): GoogleGenAI | null {
   });
 }
 
-function buildSystemInstruction(speedMode: SpeedMode, roleMode: RoleMode): string {
+function buildSystemInstruction(
+  speedMode: SpeedMode,
+  roleMode: RoleMode,
+  language?: string
+): string {
   const base = ROLE_INSTRUCTIONS[roleMode] ?? ROLE_INSTRUCTIONS.general;
   const depth = DEPTH_INSTRUCTIONS[speedMode] ?? DEPTH_INSTRUCTIONS.balanced;
-  return `${base}\n\nResponse Style:\n- ${depth}`;
+  const langName = language && language in LANGUAGE_NAMES ? LANGUAGE_NAMES[language] : null;
+  const langLine =
+    langName && language !== 'en'
+      ? `\n- Interface language is set to ${langName}. Reply in ${langName} unless the user explicitly writes in or asks for another language.`
+      : '';
+  return `${base}\n\nResponse Style:\n- ${depth}${langLine}`;
+}
+
+const DEFAULT_SITE_URL = 'https://ais-pre-hpcioxlwnalbkoftskch5h-880748617521.asia-east1.run.app';
+
+function resolveSiteBaseUrl(req: express.Request): string {
+  const envUrl = process.env.APP_URL;
+  if (envUrl && envUrl !== 'MY_APP_URL' && /^https?:\/\//i.test(envUrl)) {
+    return envUrl.replace(/\/+$/, '');
+  }
+  const forwardedProto = req.headers['x-forwarded-proto'];
+  const proto =
+    typeof forwardedProto === 'string' && forwardedProto.length > 0
+      ? forwardedProto.split(',')[0].trim()
+      : req.protocol || 'https';
+  const host = req.get('host');
+  if (host) {
+    return `${proto}://${host}`;
+  }
+  return DEFAULT_SITE_URL;
 }
 
 async function startServer() {
   const app = express();
+  app.set('trust proxy', true);
   app.use(express.json({ limit: '1mb' }));
 
   app.get('/api/health', (_req, res) => {
     res.json({ ok: true, service: 'aspirehub-api' });
+  });
+
+  app.post('/api/auth/signup', async (req, res) => {
+    try {
+      const result = await signupUser((req.body ?? {}) as Record<string, unknown>);
+      res.status(201).json(result);
+    } catch (err: unknown) {
+      if (err instanceof AuthActionError) {
+        res.status(err.status).json({ error: err.message });
+        return;
+      }
+      res.status(500).json({ error: 'Unable to create account right now. Please try again.' });
+    }
+  });
+
+  app.post('/api/auth/login', async (req, res) => {
+    try {
+      const result = await loginUser((req.body ?? {}) as Record<string, unknown>);
+      res.json(result);
+    } catch (err: unknown) {
+      if (err instanceof AuthActionError) {
+        res.status(err.status).json({ error: err.message });
+        return;
+      }
+      res.status(500).json({ error: 'Unable to sign in right now. Please try again.' });
+    }
+  });
+
+  app.get('/api/auth/me', (req, res) => {
+    try {
+      const user = requireAuthenticatedUser(req.headers.authorization);
+      res.json({
+        user: sanitizePublicUser(user),
+        bookmarks: user.bookmarks ?? [],
+      });
+    } catch (err: unknown) {
+      if (err instanceof AuthActionError) {
+        res.status(err.status).json({ error: err.message });
+        return;
+      }
+      res.status(500).json({ error: 'Unable to verify session.' });
+    }
+  });
+
+  app.put('/api/auth/profile', (req, res) => {
+    try {
+      const user = requireAuthenticatedUser(req.headers.authorization);
+      const updated = updateUserProfile(user.id, (req.body ?? {}) as Record<string, unknown>);
+      res.json({ user: updated });
+    } catch (err: unknown) {
+      if (err instanceof AuthActionError) {
+        res.status(err.status).json({ error: err.message });
+        return;
+      }
+      res.status(500).json({ error: 'Unable to save profile changes.' });
+    }
+  });
+
+  app.put('/api/auth/bookmarks', (req, res) => {
+    try {
+      const user = requireAuthenticatedUser(req.headers.authorization);
+      const body = (req.body ?? {}) as { bookmarks?: unknown };
+      const saved = updateUserBookmarks(user.id, body.bookmarks);
+      res.json({ bookmarks: saved });
+    } catch (err: unknown) {
+      if (err instanceof AuthActionError) {
+        res.status(err.status).json({ error: err.message });
+        return;
+      }
+      res.status(500).json({ error: 'Unable to sync bookmarks.' });
+    }
   });
 
   app.post('/api/chat', async (req, res) => {
@@ -93,6 +211,7 @@ async function startServer() {
       messages?: ChatMessageInput[];
       roleMode?: RoleMode;
       speedMode?: SpeedMode;
+      language?: string;
     };
 
     const rawMessages = Array.isArray(body?.messages) ? body.messages : [];
@@ -121,7 +240,7 @@ async function startServer() {
     const speedMode: SpeedMode =
       body?.speedMode === 'fast' || body?.speedMode === 'deep' ? body.speedMode : 'balanced';
 
-    const systemInstruction = buildSystemInstruction(speedMode, roleMode);
+    const systemInstruction = buildSystemInstruction(speedMode, roleMode, body?.language);
 
     try {
       let response: Awaited<ReturnType<ReturnType<typeof ai.chats.create>['sendMessage']>> | null =
@@ -220,12 +339,14 @@ async function startServer() {
   // Explicitly serve robots.txt and sitemap.xml with clean crawler headers
   const publicDir = path.resolve(__dirname, 'public');
   app.get('/robots.txt', (req, res) => {
-    const baseUrl = `${req.protocol}://${req.get('host')}`;
+    const baseUrl = resolveSiteBaseUrl(req);
     const robotsPath = path.join(publicDir, 'robots.txt');
     if (fs.existsSync(robotsPath)) {
       const rawRobots = fs.readFileSync(robotsPath, 'utf-8');
-      const absoluteRobots = rawRobots.replace(/Sitemap:\s*\/sitemap\.xml/i, `Sitemap: ${baseUrl}/sitemap.xml`);
-      res.type('text/plain').send(absoluteRobots);
+      const normalizedRobots = rawRobots
+        .replace(DEFAULT_SITE_URL, baseUrl)
+        .replace(/Sitemap:\s*\/sitemap\.xml/i, `Sitemap: ${baseUrl}/sitemap.xml`);
+      res.type('text/plain').send(normalizedRobots);
       return;
     }
     res.type('text/plain').send(`User-agent: *\nAllow: /\n\nSitemap: ${baseUrl}/sitemap.xml\n`);
@@ -234,10 +355,12 @@ async function startServer() {
   app.get('/sitemap.xml', (req, res) => {
     const sitemapPath = path.join(publicDir, 'sitemap.xml');
     if (fs.existsSync(sitemapPath)) {
-      const baseUrl = `${req.protocol}://${req.get('host')}`;
+      const baseUrl = resolveSiteBaseUrl(req);
       const rawXml = fs.readFileSync(sitemapPath, 'utf-8');
-      const absoluteXml = rawXml.replace(/<loc>(\/[^<]*)<\/loc>/g, `<loc>${baseUrl}$1</loc>`);
-      res.type('application/xml').send(absoluteXml);
+      const normalizedXml = rawXml
+        .replaceAll(DEFAULT_SITE_URL, baseUrl)
+        .replace(/<loc>(\/[^<]*)<\/loc>/g, `<loc>${baseUrl}$1</loc>`);
+      res.type('application/xml').send(normalizedXml);
       return;
     }
     res.status(404).end();

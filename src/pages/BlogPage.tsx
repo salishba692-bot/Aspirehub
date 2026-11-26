@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { ArrowRight, RotateCcw, Search } from 'lucide-react';
 import { BLOG_CATEGORIES } from '../data/blogData';
+import { useLanguage } from '../context/LanguageContext';
 import { useAsyncData } from '../hooks/useAsyncData';
 import { useDocumentTitle } from '../hooks/useDocumentTitle';
 import { fetchBlogPosts } from '../services/api';
@@ -10,9 +11,12 @@ import { BlogCard } from '../components/BlogCard';
 import { EmptyState } from '../components/EmptyState';
 import { ErrorBanner, LoadingSkeleton } from '../components/LoadingSkeleton';
 import { PageHeader } from '../components/PageHeader';
+import { RelatedCrossLinks } from '../components/RelatedCrossLinks';
 import { SafeImage } from '../components/SafeImage';
 
 export function BlogPage() {
+  const { t } = useLanguage();
+
   useDocumentTitle(
     'Blog & Articles — AspireHub',
     'Read practical essays and study guides on scholarships, student freelancing, AI literacy, and portfolio design.'
@@ -61,10 +65,10 @@ export function BlogPage() {
   return (
     <div>
       <PageHeader
-        sectionLabel="AspireHub Journal"
-        title="Blog &amp; Educational Articles"
-        subtitle="Thoughtful, practical guidance on scholarship essays, balancing studies with freelance work, and learning high-value digital skills."
-        breadcrumbCurrent="Blog"
+        sectionLabel={t.pages.blogLabel}
+        title={t.pages.blogTitle}
+        subtitle={t.pages.blogSubtitle}
+        breadcrumbCurrent={t.nav.blog}
       />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
@@ -72,9 +76,9 @@ export function BlogPage() {
         {!loading && !error && featuredPost && selectedCategory === 'All' && !searchQuery && (
           <section
             aria-label="Featured Article"
-            className="bg-white border border-slate-200/90 rounded-2xl overflow-hidden grid grid-cols-1 lg:grid-cols-12 items-stretch"
+            className="bg-white dark:bg-[#141E3D] border border-slate-200/90 dark:border-slate-800 rounded-2xl overflow-hidden grid grid-cols-1 lg:grid-cols-12 items-stretch"
           >
-            <div className="lg:col-span-6 bg-slate-100 min-h-[240px]">
+            <div className="lg:col-span-6 bg-slate-100 dark:bg-slate-900 min-h-[240px]">
               <SafeImage
                 src={featuredPost.thumbnail}
                 alt={featuredPost.title}
@@ -84,8 +88,10 @@ export function BlogPage() {
             </div>
             <div className="lg:col-span-6 p-7 sm:p-10 flex flex-col justify-between">
               <div>
-                <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-slate-500 tabular-nums mb-3">
-                  <span className="font-semibold text-[#6956D8]">Featured Post</span>
+                <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-slate-500 dark:text-slate-400 tabular-nums mb-3">
+                  <span className="font-semibold text-[#6956D8] dark:text-[#4DA8FF]">
+                    {t.sections.blogKicker}
+                  </span>
                   <span aria-hidden="true">·</span>
                   <span>{featuredPost.category}</span>
                   <span aria-hidden="true">·</span>
@@ -94,27 +100,27 @@ export function BlogPage() {
                   <span>{featuredPost.readingTime}</span>
                 </div>
 
-                <h2 className="text-2xl sm:text-3xl font-bold text-[#101B3D] leading-snug mb-3">
+                <h2 className="text-2xl sm:text-3xl font-bold text-[#101B3D] dark:text-white leading-snug mb-3">
                   <Link
                     to={`/blog/${featuredPost.slug}`}
-                    className="hover:text-[#6956D8] transition-colors"
+                    className="hover:text-[#6956D8] dark:hover:text-[#4DA8FF] transition-colors"
                   >
                     {featuredPost.title}
                   </Link>
                 </h2>
 
-                <p className="text-sm sm:text-base text-[#202A44]/85 leading-relaxed mb-6">
+                <p className="text-sm sm:text-base text-[#202A44]/85 dark:text-slate-300 leading-relaxed mb-6">
                   {featuredPost.excerpt}
                 </p>
               </div>
 
-              <div className="flex items-center justify-between pt-4 border-t border-slate-100">
-                <span className="text-xs text-slate-500">{featuredPost.author}</span>
+              <div className="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-800">
+                <span className="text-xs text-slate-500 dark:text-slate-400">{featuredPost.author}</span>
                 <Link
                   to={`/blog/${featuredPost.slug}`}
-                  className="inline-flex items-center gap-1.5 px-4 py-2.5 text-xs font-semibold text-white bg-[#101B3D] hover:bg-[#192854] rounded-lg transition-colors"
+                  className="inline-flex items-center gap-1.5 px-4 py-2.5 text-xs font-semibold text-white bg-[#101B3D] dark:bg-[#6956D8] hover:bg-[#192854] dark:hover:bg-[#5542C0] rounded-lg transition-colors"
                 >
-                  Read Featured Article
+                  {t.common.readArticle}
                   <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
                 </Link>
               </div>
@@ -123,7 +129,7 @@ export function BlogPage() {
         )}
 
         {/* Filter & Search Bar */}
-        <div className="bg-white border border-slate-200/90 rounded-xl p-4 sm:p-5 space-y-4">
+        <div className="bg-white dark:bg-[#141E3D] border border-slate-200/90 dark:border-slate-800 rounded-xl p-4 sm:p-5 space-y-4">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="relative flex-1 max-w-md">
               <Search
@@ -135,23 +141,24 @@ export function BlogPage() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search articles by topic or keyword..."
-                aria-label="Search blog articles"
-                className="w-full pl-9 pr-3 py-2.5 text-sm bg-[#F7F8FC] border border-slate-200 rounded-lg text-[#101B3D] placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#4DA8FF]"
+                aria-label={t.filters.searchLabel}
+                className="w-full pl-9 pr-3 py-2.5 text-sm bg-[#F7F8FC] dark:bg-[#0F1733] border border-slate-200 dark:border-slate-700 rounded-lg text-[#101B3D] dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#4DA8FF]"
               />
             </div>
 
             <div className="flex items-center gap-3 text-sm">
-              <span className="text-[#202A44]/80 tabular-nums">
-                <strong className="text-[#101B3D]">{filteredPosts.length}</strong> articles
+              <span className="text-[#202A44]/80 dark:text-slate-300 tabular-nums">
+                <strong className="text-[#101B3D] dark:text-white">{filteredPosts.length}</strong> /{' '}
+                {posts.length}
               </span>
               {(selectedCategory !== 'All' || searchQuery) && (
                 <button
                   type="button"
                   onClick={resetFilters}
-                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#6956D8] hover:text-[#5542C0] cursor-pointer"
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#6956D8] dark:text-[#4DA8FF] hover:text-[#5542C0] cursor-pointer"
                 >
                   <RotateCcw className="w-3.5 h-3.5" aria-hidden="true" />
-                  Reset
+                  {t.filters.reset}
                 </button>
               )}
             </div>
@@ -160,7 +167,7 @@ export function BlogPage() {
           <div
             role="tablist"
             aria-label="Blog Categories"
-            className="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-100"
+            className="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-100 dark:border-slate-800"
           >
             {['All', ...BLOG_CATEGORIES].map((cat) => {
               const active = selectedCategory === cat;
@@ -173,11 +180,11 @@ export function BlogPage() {
                   onClick={() => handleCategoryChange(cat)}
                   className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors cursor-pointer ${
                     active
-                      ? 'bg-[#101B3D] text-white'
-                      : 'bg-[#F7F8FC] text-[#202A44] border border-slate-200 hover:border-[#6956D8]/40'
+                      ? 'bg-[#101B3D] dark:bg-[#6956D8] text-white'
+                      : 'bg-[#F7F8FC] dark:bg-[#0F1733] text-[#202A44] dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:border-[#6956D8]/40'
                   }`}
                 >
-                  {cat}
+                  {cat === 'All' ? t.common.all : cat}
                 </button>
               );
             })}
@@ -193,7 +200,7 @@ export function BlogPage() {
           <EmptyState
             title="No articles matched your search"
             description="Try clearing the category filter or searching with a broader keyword."
-            actionLabel="Show All Articles"
+            actionLabel={t.common.resetFilters}
             onAction={resetFilters}
           />
         ) : (
@@ -203,6 +210,29 @@ export function BlogPage() {
             ))}
           </div>
         )}
+
+        <RelatedCrossLinks
+          links={[
+            {
+              title: 'Scholarship Hub',
+              description: 'Apply essay techniques from the journal to real international portals.',
+              to: '/scholarships',
+              badge: 'Scholarship',
+            },
+            {
+              title: 'Interactive Student & Career Toolkit',
+              description: 'Run the eligibility checklist, career quiz, and CV bullet generator.',
+              to: '/toolkit',
+              badge: 'Toolkit',
+            },
+            {
+              title: 'AI Tools Directory',
+              description: 'Compare verified AI research and coding workflows side by side.',
+              to: '/ai-tools',
+              badge: 'AI Tool',
+            },
+          ]}
+        />
       </div>
     </div>
   );

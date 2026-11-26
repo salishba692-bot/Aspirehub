@@ -10,12 +10,15 @@ interface SeoOptions {
 
 const SEGMENT_LABELS: Record<string, string> = {
   scholarships: 'Scholarships',
-  freelancing: 'Freelancing Guides',
+  freelancing: 'Career & Freelancing',
   'ai-tools': 'AI Tools Directory',
   compare: 'Compare AI Tools',
   resources: 'Free Resources',
   blog: 'Blog',
   about: 'About AspireHub',
+  contact: 'Contact Us',
+  'privacy-policy': 'Privacy Policy',
+  disclaimer: 'Disclaimer',
 };
 
 function formatSegmentLabel(segment: string): string {

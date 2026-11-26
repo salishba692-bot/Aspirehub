@@ -11,9 +11,12 @@ import {
 } from 'lucide-react';
 import { AI_TOOLS_DATA } from '../data/aiToolsData';
 import { useBookmarks } from '../context/BookmarksContext';
+import { useLanguage } from '../context/LanguageContext';
+import { useToast } from '../context/ToastContext';
 import { useAsyncData } from '../hooks/useAsyncData';
 import { useDocumentTitle } from '../hooks/useDocumentTitle';
 import { fetchAIToolBySlug } from '../services/api';
+import { formatReadableDate } from '../utils/formatters';
 import { InternalLinkRef } from '../types';
 import { AIToolCard, getAIToolIcon } from '../components/AIToolCard';
 import { EmptyState } from '../components/EmptyState';
@@ -29,6 +32,12 @@ function getToolInternalLinks(category: string): InternalLinkRef[] {
       description: 'Learn active-recall workflows and verification rules for students.',
       to: '/blog/using-ai-tools-to-learn-faster-without-hollowing-out-your-skills',
       badge: 'Blog',
+    },
+    {
+      title: 'Practical Skill Assessment Quiz',
+      description: 'Test your Web/AI and digital workflow knowledge in 5 quick questions.',
+      to: '/toolkit?tab=skill-quiz',
+      badge: 'Toolkit',
     },
   ];
 
@@ -61,6 +70,8 @@ function getToolInternalLinks(category: string): InternalLinkRef[] {
 export function AIToolDetailPage() {
   const { slug = '' } = useParams<{ slug: string }>();
   const { isBookmarked, toggleBookmark } = useBookmarks();
+  const { t } = useLanguage();
+  const { showToast } = useToast();
 
   const {
     data: result,
@@ -73,8 +84,8 @@ export function AIToolDetailPage() {
 
   const breadcrumbItems: BreadcrumbItem[] | undefined = tool
     ? [
-        { label: 'Home', to: '/' },
-        { label: 'AI Tools', to: '/ai-tools' },
+        { label: t.nav.home, to: '/' },
+        { label: t.nav.aiTools, to: '/ai-tools' },
         {
           label: tool.category,
           to: `/ai-tools?category=${encodeURIComponent(tool.category)}`,
@@ -124,7 +135,7 @@ export function AIToolDetailPage() {
         <EmptyState
           title="AI tool not found"
           description="The requested AI tool could not be found in the directory."
-          actionLabel="Back to AI Tools Directory"
+          actionLabel={t.sections.exploreTools}
           onAction={() => {
             window.location.href = '/ai-tools';
           }}
@@ -146,6 +157,18 @@ export function AIToolDetailPage() {
   ].join(',')}`;
   const internalLinks = getToolInternalLinks(tool.category);
 
+  function handleBookmarkToggle() {
+    if (!tool) return;
+    const added = toggleBookmark({
+      id: tool.id,
+      type: 'ai-tool',
+      title: tool.name,
+      subtitle: `${tool.category} · ${tool.pricingType}`,
+      path: `/ai-tools/${tool.slug}`,
+    });
+    showToast(added ? t.common.savedToBookmarks : t.common.removedFromBookmarks, 'info');
+  }
+
   return (
     <div>
       <PageHeader
@@ -153,12 +176,12 @@ export function AIToolDetailPage() {
         title={tool.name}
         subtitle={tool.shortDescription}
         breadcrumbCurrent={tool.name}
-        parentLink={{ label: 'AI Tools', to: '/ai-tools' }}
+        parentLink={{ label: t.nav.aiTools, to: '/ai-tools' }}
         showBreadcrumb={false}
       />
 
       {breadcrumbItems && (
-        <div className="bg-white border-b border-slate-200/80">
+        <div className="bg-white dark:bg-[#141E3D] border-b border-slate-200/80 dark:border-slate-800">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5">
             <Breadcrumb items={breadcrumbItems} />
           </div>
@@ -169,42 +192,49 @@ export function AIToolDetailPage() {
         <div className="mb-6">
           <Link
             to="/ai-tools"
-            className="inline-flex items-center gap-1.5 text-sm font-medium text-[#202A44] hover:text-[#6956D8] transition-colors"
+            className="inline-flex items-center gap-1.5 text-sm font-medium text-[#202A44] dark:text-slate-200 hover:text-[#6956D8] dark:hover:text-[#4DA8FF] transition-colors"
           >
             <ArrowLeft className="w-4 h-4" aria-hidden="true" />
-            Back to AI Tools Directory
+            {t.sections.exploreTools}
           </Link>
         </div>
 
-        <div className="mb-8 bg-white border border-slate-200/90 rounded-xl p-4 sm:p-5 flex items-start gap-3">
-          <Info className="w-5 h-5 text-[#6956D8] shrink-0 mt-0.5" aria-hidden="true" />
-          <p className="text-xs sm:text-sm text-[#202A44]/85 leading-relaxed">{tool.dataNotice}</p>
+        <div className="mb-8 bg-white dark:bg-[#141E3D] border border-slate-200/90 dark:border-slate-800 rounded-xl p-4 sm:p-5 flex items-start gap-3">
+          <Info className="w-5 h-5 text-[#6956D8] dark:text-[#4DA8FF] shrink-0 mt-0.5" aria-hidden="true" />
+          <p className="text-xs sm:text-sm text-[#202A44]/85 dark:text-slate-300 leading-relaxed">
+            {tool.dataNotice}
+          </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           <div className="lg:col-span-8 space-y-8">
-            <section className="bg-white border border-slate-200/90 rounded-xl p-6 sm:p-8">
+            <section className="bg-white dark:bg-[#141E3D] border border-slate-200/90 dark:border-slate-800 rounded-xl p-6 sm:p-8">
               <div className="flex items-center gap-3.5 mb-4">
-                <div className="w-12 h-12 rounded-xl bg-[#F7F8FC] border border-slate-200 flex items-center justify-center text-[#6956D8]">
+                <div className="w-12 h-12 rounded-xl bg-[#F7F8FC] dark:bg-[#1B284F] border border-slate-200 dark:border-slate-700 flex items-center justify-center text-[#6956D8] dark:text-[#4DA8FF]">
                   <Icon className="w-6 h-6" aria-hidden="true" />
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold text-[#101B3D]">Overview</h2>
-                  <p className="text-xs text-slate-500">
-                    {tool.isVerified ? 'Verified Official Listing' : 'Sample Directory Listing'}
+                  <h2 className="text-xl font-bold text-[#101B3D] dark:text-white">Overview</h2>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">
+                    {tool.isVerified ? t.common.verifiedTool : t.common.sampleListing}
                   </p>
                 </div>
               </div>
-              <p className="text-base text-[#202A44]/90 leading-relaxed">{tool.fullDescription}</p>
+              <p className="text-base text-[#202A44]/90 dark:text-slate-300 leading-relaxed">
+                {tool.fullDescription}
+              </p>
             </section>
 
-            <section className="bg-white border border-slate-200/90 rounded-xl p-6 sm:p-8">
-              <h2 className="text-xl font-bold text-[#101B3D] mb-4">Main Features</h2>
+            <section className="bg-white dark:bg-[#141E3D] border border-slate-200/90 dark:border-slate-800 rounded-xl p-6 sm:p-8">
+              <h2 className="text-xl font-bold text-[#101B3D] dark:text-white mb-4">Main Features</h2>
               <ul className="space-y-3">
                 {tool.mainFeatures.map((feat, idx) => (
-                  <li key={idx} className="flex items-start gap-3 text-sm sm:text-base text-[#202A44]/90">
+                  <li
+                    key={idx}
+                    className="flex items-start gap-3 text-sm sm:text-base text-[#202A44]/90 dark:text-slate-300"
+                  >
                     <CheckCircle2
-                      className="w-5 h-5 text-[#6956D8] shrink-0 mt-0.5"
+                      className="w-5 h-5 text-[#6956D8] dark:text-[#4DA8FF] shrink-0 mt-0.5"
                       aria-hidden="true"
                     />
                     <span className="leading-relaxed">{feat}</span>
@@ -213,26 +243,29 @@ export function AIToolDetailPage() {
               </ul>
             </section>
 
-            <section className="bg-white border border-slate-200/90 rounded-xl p-6 sm:p-8">
-              <h2 className="text-xl font-bold text-[#101B3D] mb-4">
+            <section className="bg-white dark:bg-[#141E3D] border border-slate-200/90 dark:border-slate-800 rounded-xl p-6 sm:p-8">
+              <h2 className="text-xl font-bold text-[#101B3D] dark:text-white mb-4">
                 Practical Use Cases for Students &amp; Freelancers
               </h2>
-              <ul className="space-y-2.5 list-disc pl-5 text-sm sm:text-base text-[#202A44]/90 leading-relaxed">
+              <ul className="space-y-2.5 list-disc pl-5 text-sm sm:text-base text-[#202A44]/90 dark:text-slate-300 leading-relaxed">
                 {tool.useCases.map((uc, idx) => (
                   <li key={idx}>{uc}</li>
                 ))}
               </ul>
             </section>
 
-            <section className="bg-white border border-slate-200/90 rounded-xl p-6 sm:p-8">
-              <h2 className="text-xl font-bold text-[#101B3D] mb-4">
+            <section className="bg-white dark:bg-[#141E3D] border border-slate-200/90 dark:border-slate-800 rounded-xl p-6 sm:p-8">
+              <h2 className="text-xl font-bold text-[#101B3D] dark:text-white mb-4">
                 Considerations &amp; Limitations
               </h2>
               <ul className="space-y-3">
                 {tool.limitations.map((lim, idx) => (
-                  <li key={idx} className="flex items-start gap-3 text-sm sm:text-base text-[#202A44]/85">
+                  <li
+                    key={idx}
+                    className="flex items-start gap-3 text-sm sm:text-base text-[#202A44]/85 dark:text-slate-300"
+                  >
                     <AlertCircle
-                      className="w-5 h-5 text-amber-600 shrink-0 mt-0.5"
+                      className="w-5 h-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5"
                       aria-hidden="true"
                     />
                     <span className="leading-relaxed">{lim}</span>
@@ -242,42 +275,51 @@ export function AIToolDetailPage() {
             </section>
 
             <RelatedCrossLinks
-              heading="Related Guides on AspireHub"
+              heading={t.sections.crossLinksHeading}
               links={internalLinks}
             />
           </div>
 
           <aside className="lg:col-span-4 space-y-6 lg:sticky lg:top-24">
-            <div className="bg-white border border-slate-200/90 rounded-xl p-6 space-y-5">
-              <h2 className="text-lg font-bold text-[#101B3D]">Quick Specs</h2>
+            <div className="bg-white dark:bg-[#141E3D] border border-slate-200/90 dark:border-slate-800 rounded-xl p-6 space-y-5">
+              <h2 className="text-lg font-bold text-[#101B3D] dark:text-white">Quick Specs</h2>
 
               <dl className="space-y-3 text-sm">
-                <div className="pb-3 border-b border-slate-100">
-                  <dt className="text-xs text-slate-500">Pricing Tier</dt>
-                  <dd className="font-semibold text-[#6956D8] mt-0.5">{tool.pricingType}</dd>
-                  <dd className="text-xs text-[#202A44]/80 mt-1 leading-relaxed">
+                <div className="pb-3 border-b border-slate-100 dark:border-slate-800">
+                  <dt className="text-xs text-slate-500 dark:text-slate-400">Pricing Tier</dt>
+                  <dd className="font-semibold text-[#6956D8] dark:text-[#4DA8FF] mt-0.5">
+                    {tool.pricingType}
+                  </dd>
+                  <dd className="text-xs text-[#202A44]/80 dark:text-slate-300 mt-1 leading-relaxed">
                     {tool.pricingNote}
                   </dd>
                 </div>
 
-                <div className="flex items-start justify-between gap-3 pb-3 border-b border-slate-100">
-                  <dt className="text-slate-500">Free Tier</dt>
-                  <dd className="font-semibold text-[#101B3D] text-right">
+                <div className="flex items-start justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-800">
+                  <dt className="text-slate-500 dark:text-slate-400">Free Tier</dt>
+                  <dd className="font-semibold text-[#101B3D] dark:text-white text-right">
                     {tool.comparison.freeTierAvailable}
                   </dd>
                 </div>
 
-                <div className="flex items-start justify-between gap-3 pb-3 border-b border-slate-100">
-                  <dt className="text-slate-500">Platforms</dt>
-                  <dd className="font-medium text-[#101B3D] text-right">
+                <div className="flex items-start justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-800">
+                  <dt className="text-slate-500 dark:text-slate-400">Platforms</dt>
+                  <dd className="font-medium text-[#101B3D] dark:text-slate-200 text-right">
                     {tool.comparison.platforms}
                   </dd>
                 </div>
 
-                <div className="flex items-start justify-between gap-3">
-                  <dt className="text-slate-500">Learning Curve</dt>
-                  <dd className="font-medium text-[#101B3D] text-right">
+                <div className="flex items-start justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-800">
+                  <dt className="text-slate-500 dark:text-slate-400">Learning Curve</dt>
+                  <dd className="font-medium text-[#101B3D] dark:text-slate-200 text-right">
                     {tool.comparison.learningCurve}
+                  </dd>
+                </div>
+
+                <div className="flex items-start justify-between gap-3">
+                  <dt className="text-slate-500 dark:text-slate-400">{t.common.updated}</dt>
+                  <dd className="font-medium text-[#101B3D] dark:text-slate-200 text-right tabular-nums">
+                    {formatReadableDate(tool.lastUpdated)}
                   </dd>
                 </div>
               </dl>
@@ -285,10 +327,10 @@ export function AIToolDetailPage() {
               <div className="pt-2 space-y-2.5">
                 <Link
                   to={compareTarget}
-                  className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 text-sm font-semibold text-white bg-[#101B3D] hover:bg-[#192854] rounded-xl transition-colors"
+                  className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 text-sm font-semibold text-white bg-[#101B3D] dark:bg-[#1B284F] hover:bg-[#192854] rounded-xl transition-colors"
                 >
                   <GitCompareArrows className="w-4 h-4" aria-hidden="true" />
-                  Compare With Similar Tools
+                  {t.pages.compareTitle}
                 </Link>
 
                 <a
@@ -297,29 +339,21 @@ export function AIToolDetailPage() {
                   rel="noopener noreferrer"
                   className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 text-sm font-semibold text-white bg-[#6956D8] hover:bg-[#5542C0] rounded-xl transition-colors"
                 >
-                  Visit Official Website
+                  {t.common.visitTool}
                   <ArrowUpRight className="w-4 h-4" aria-hidden="true" />
                 </a>
 
                 <button
                   type="button"
-                  onClick={() =>
-                    toggleBookmark({
-                      id: tool.id,
-                      type: 'ai-tool',
-                      title: tool.name,
-                      subtitle: `${tool.category} · ${tool.pricingType}`,
-                      path: `/ai-tools/${tool.slug}`,
-                    })
-                  }
+                  onClick={handleBookmarkToggle}
                   className={`w-full inline-flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-semibold rounded-xl border transition-colors cursor-pointer ${
                     saved
-                      ? 'bg-[#6956D8]/10 text-[#6956D8] border-[#6956D8]/40'
-                      : 'bg-[#F7F8FC] text-[#101B3D] border-slate-200 hover:border-slate-300'
+                      ? 'bg-[#6956D8]/10 text-[#6956D8] dark:text-[#4DA8FF] border-[#6956D8]/40'
+                      : 'bg-[#F7F8FC] dark:bg-[#0F1733] text-[#101B3D] dark:text-white border-slate-200 dark:border-slate-700 hover:border-slate-300'
                   }`}
                 >
                   <Bookmark className={`w-4 h-4 ${saved ? 'fill-current' : ''}`} aria-hidden="true" />
-                  {saved ? 'Saved to Bookmarks' : 'Save Tool'}
+                  {saved ? t.common.saved : t.common.save}
                 </button>
               </div>
             </div>
@@ -327,8 +361,10 @@ export function AIToolDetailPage() {
         </div>
 
         {related.length > 0 && (
-          <section className="mt-16 pt-12 border-t border-slate-200">
-            <h2 className="text-2xl font-bold text-[#101B3D] mb-6">Similar AI Tools</h2>
+          <section className="mt-16 pt-12 border-t border-slate-200 dark:border-slate-800">
+            <h2 className="text-2xl font-bold text-[#101B3D] dark:text-white mb-6">
+              Similar AI Tools
+            </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {related.map((item) => (
                 <AIToolCard key={item.id} tool={item} />

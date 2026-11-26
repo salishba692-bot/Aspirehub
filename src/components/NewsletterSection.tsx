@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
 import { ArrowRight, CheckCircle2, AlertCircle } from 'lucide-react';
 import { subscribeNewsletter } from '../services/api';
+import { useLanguage } from '../context/LanguageContext';
+import { useToast } from '../context/ToastContext';
 
 export function NewsletterSection() {
+  const { t } = useLanguage();
+  const { showToast } = useToast();
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
   const [feedback, setFeedback] = useState('');
@@ -17,9 +21,11 @@ export function NewsletterSection() {
       setStatus('success');
       setFeedback(result.message);
       setEmail('');
+      showToast(result.message, 'success');
     } else {
       setStatus('error');
       setFeedback(result.message);
+      showToast(result.message, 'error');
     }
   }
 
@@ -35,16 +41,16 @@ export function NewsletterSection() {
       <div className="relative grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
         <div className="lg:col-span-7">
           <p className="text-xs font-medium tracking-wide text-[#4DA8FF] mb-2">
-            Weekly Opportunity Digest
+            {t.newsletter.kicker}
           </p>
           <h2
             id="newsletter-heading"
             className="text-2xl sm:text-3xl font-bold tracking-tight text-white"
           >
-            Stay updated on scholarship guides, freelance playbooks, and verified AI tools.
+            {t.newsletter.title}
           </h2>
           <p className="mt-3 text-sm sm:text-base text-slate-200/85 max-w-xl leading-relaxed">
-            Receive practical study and career notes once a week—no spam, no clickbait deadlines.
+            {t.newsletter.subtitle}
           </p>
         </div>
 
@@ -62,7 +68,7 @@ export function NewsletterSection() {
                   setEmail(e.target.value);
                   if (status === 'error') setStatus('idle');
                 }}
-                placeholder="you@university.edu"
+                placeholder={t.newsletter.placeholder}
                 aria-invalid={status === 'error'}
                 className="flex-1 min-w-0 px-4 py-3 rounded-lg bg-white text-[#101B3D] placeholder:text-slate-400 text-sm border border-white/20 focus:outline-none focus:ring-2 focus:ring-[#4DA8FF]"
               />
@@ -71,7 +77,7 @@ export function NewsletterSection() {
                 disabled={status === 'submitting'}
                 className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-lg bg-[#6956D8] hover:bg-[#5542C0] disabled:opacity-60 text-white text-sm font-semibold transition-colors whitespace-nowrap shrink-0 cursor-pointer"
               >
-                {status === 'submitting' ? 'Saving...' : 'Subscribe'}
+                {status === 'submitting' ? t.newsletter.saving : t.newsletter.subscribe}
                 <ArrowRight className="w-4 h-4" aria-hidden="true" />
               </button>
             </div>

@@ -26,7 +26,7 @@ export function Breadcrumb({
     <nav aria-label="Breadcrumb" className={className}>
       <ol
         className={`flex flex-wrap items-center gap-x-1.5 gap-y-1 text-xs sm:text-[13px] ${
-          isDark ? 'text-slate-300' : 'text-slate-500'
+          isDark ? 'text-slate-300' : 'text-slate-500 dark:text-slate-400'
         }`}
       >
         {items.map((item, idx) => {
@@ -41,7 +41,7 @@ export function Breadcrumb({
               {idx > 0 && (
                 <ChevronRight
                   className={`w-3.5 h-3.5 shrink-0 ${
-                    isDark ? 'text-slate-400' : 'text-slate-400'
+                    isDark ? 'text-slate-400' : 'text-slate-400 dark:text-slate-500'
                   }`}
                   aria-hidden="true"
                 />
@@ -53,7 +53,7 @@ export function Breadcrumb({
                   className={`inline-flex items-center gap-1.5 whitespace-nowrap shrink-0 transition-colors hover:underline underline-offset-4 ${
                     isDark
                       ? 'hover:text-white text-slate-300'
-                      : 'hover:text-[#6956D8] text-slate-600'
+                      : 'hover:text-[#6956D8] dark:hover:text-[#4DA8FF] text-slate-600 dark:text-slate-300'
                   }`}
                 >
                   {isFirst && (
@@ -67,7 +67,7 @@ export function Breadcrumb({
                   className={`truncate max-w-[220px] sm:max-w-md ${
                     isDark
                       ? 'text-white/95 font-medium'
-                      : 'text-[#101B3D] font-semibold'
+                      : 'text-[#101B3D] dark:text-white font-semibold'
                   }`}
                   title={item.label}
                 >

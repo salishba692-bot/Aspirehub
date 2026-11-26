@@ -6,9 +6,18 @@ interface SafeImageProps {
   alt: string;
   className?: string;
   eager?: boolean;
+  width?: number;
+  height?: number;
 }
 
-export function SafeImage({ src, alt, className = '', eager = false }: SafeImageProps) {
+export function SafeImage({
+  src,
+  alt,
+  className = '',
+  eager = false,
+  width,
+  height,
+}: SafeImageProps) {
   const [hasError, setHasError] = useState(false);
 
   if (hasError || !src) {
@@ -30,8 +39,12 @@ export function SafeImage({ src, alt, className = '', eager = false }: SafeImage
     <img
       src={src}
       alt={alt}
+      width={width}
+      height={height}
       referrerPolicy="no-referrer"
       loading={eager ? 'eager' : 'lazy'}
+      decoding="async"
+      fetchPriority={eager ? 'high' : 'low'}
       onError={() => setHasError(true)}
       className={className}
     />

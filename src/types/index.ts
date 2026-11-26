@@ -1,3 +1,5 @@
+export type LanguageCode = 'en' | 'es' | 'fr' | 'ur' | 'ar';
+
 export type ScholarshipCategory =
   | 'Pakistan Scholarships'
   | 'International Scholarships'
@@ -16,7 +18,7 @@ export interface InternalLinkRef {
   title: string;
   description: string;
   to: string;
-  badge: 'Scholarship' | 'Freelancing' | 'AI Tool' | 'Resource' | 'Blog';
+  badge: 'Scholarship' | 'Freelancing' | 'AI Tool' | 'Resource' | 'Blog' | 'Toolkit';
 }
 
 export interface Scholarship {
@@ -26,11 +28,13 @@ export interface Scholarship {
   country: string;
   organization: string;
   degreeLevel: DegreeLevel;
+  subjects: string[];
   categories: ScholarshipCategory[];
   fundingType: FundingType;
   fundingCoverage: string;
   eligibilitySummary: string;
   deadline: string;
+  lastUpdated: string;
   status: ApplicationStatus;
   officialUrl: string;
   isSampleData: boolean;
@@ -47,6 +51,7 @@ export interface Scholarship {
 
 export type FreelancingCategory =
   | 'Introduction to Freelancing'
+  | 'Remote Jobs & Internships'
   | 'Fiverr Complete Guide'
   | 'Upwork Complete Guide'
   | 'How to Create a Portfolio'
@@ -81,6 +86,7 @@ export interface FreelancingGuide {
   thumbnail: string;
   featured?: boolean;
   difficulty: 'Beginner' | 'Intermediate';
+  regionScope?: string;
   updatedAt: string;
   sections: GuideSection[];
   actionChecklist: string[];
@@ -110,6 +116,7 @@ export interface AITool {
   pricingNote: string;
   officialUrl: string;
   isVerified: boolean;
+  lastUpdated: string;
   dataNotice: string;
   popular?: boolean;
   mainFeatures: string[];
@@ -138,6 +145,8 @@ export interface AITool {
 
 export type ResourceCategory =
   | 'Free Online Courses'
+  | 'Certifications & Aid'
+  | 'International Student Guides'
   | 'CV Templates'
   | 'Resume Writing Guides'
   | 'Cover Letter Guides'
@@ -167,6 +176,8 @@ export interface FreeResource {
   category: ResourceCategory;
   description: string;
   readingTime: string;
+  lastUpdated: string;
+  internationalFocus?: boolean;
   externalUrl?: string;
   isVerifiedLink: boolean;
   isSampleTemplate?: boolean;
@@ -221,6 +232,12 @@ export type BookmarkEntityType =
   | 'blog'
   | 'resource';
 
+export type ScholarshipTrackingStage =
+  | 'Researching'
+  | 'Preparing Docs'
+  | 'Submitted'
+  | 'Shortlisted';
+
 export interface BookmarkItem {
   id: string;
   type: BookmarkEntityType;
@@ -228,6 +245,11 @@ export interface BookmarkItem {
   subtitle: string;
   path: string;
   savedAt: string;
+  trackingStage?: ScholarshipTrackingStage;
+  reminderDate?: string;
+  notes?: string;
+  deadline?: string;
+  isExpired?: boolean;
 }
 
 export interface ApiResult<T> {
@@ -237,4 +259,20 @@ export interface ApiResult<T> {
     total: number;
     timestamp: string;
   };
+}
+
+export type UserFocusGoal =
+  | 'Scholarships'
+  | 'Freelancing & Remote Jobs'
+  | 'AI Workflows'
+  | 'All-in-One Growth';
+
+export interface UserAccount {
+  id: string;
+  name: string;
+  email: string;
+  country: string;
+  focusGoal: UserFocusGoal;
+  bio: string;
+  createdAt: string;
 }
