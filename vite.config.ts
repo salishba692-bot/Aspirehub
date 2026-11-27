@@ -39,27 +39,25 @@ export default defineConfig(() => {
     build: {
       rolldownOptions: {
         output: {
-          manualChunks(id: string) {
-            if (id.includes('node_modules')) {
-              if (
-                id.includes('/react/') ||
-                id.includes('/react-dom/') ||
-                id.includes('/react-router') ||
-                id.includes('/scheduler/')
-              ) {
-                return 'react-vendor';
-              }
-              if (id.includes('/motion/') || id.includes('/framer-motion/')) {
-                return 'motion-vendor';
-              }
-              if (id.includes('/lucide-react/')) {
-                return 'icons-vendor';
-              }
-            }
-            if (id.includes('/src/i18n/')) {
-              return 'i18n-translations';
-            }
-            return undefined;
+          codeSplitting: {
+            groups: [
+              {
+                name: 'react-vendor',
+                test: /[\\/]node_modules[\\/](react|react-dom|react-router|scheduler)[\\/]/,
+              },
+              {
+                name: 'motion-vendor',
+                test: /[\\/]node_modules[\\/](motion|framer-motion)[\\/]/,
+              },
+              {
+                name: 'icons-vendor',
+                test: /[\\/]node_modules[\\/]lucide-react[\\/]/,
+              },
+              {
+                name: 'i18n-translations',
+                test: /[\\/]src[\\/]i18n[\\/]/,
+              },
+            ],
           },
         },
       },
