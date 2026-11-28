@@ -37,30 +37,7 @@ export default defineConfig(() => {
       },
     },
     build: {
-      rolldownOptions: {
-        output: {
-          codeSplitting: {
-            groups: [
-              {
-                name: 'react-vendor',
-                test: /[\\/]node_modules[\\/](react|react-dom|react-router|scheduler)[\\/]/,
-              },
-              {
-                name: 'motion-vendor',
-                test: /[\\/]node_modules[\\/](motion|framer-motion)[\\/]/,
-              },
-              {
-                name: 'icons-vendor',
-                test: /[\\/]node_modules[\\/]lucide-react[\\/]/,
-              },
-              {
-                name: 'i18n-translations',
-                test: /[\\/]src[\\/]i18n[\\/]/,
-              },
-            ],
-          },
-        },
-      },
+      chunkSizeWarningLimit: 1000,
     },
     server: {
       // HMR is disabled in AI Studio via DISABLE_HMR env var.
